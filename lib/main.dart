@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final wakeupTimesNotifier = ValueNotifier([]);
+  final sleepNowNotifier = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -47,17 +48,60 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                buildSleepNowButton(context),
+                Padding(
+                  padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: 8,
+                    vertical: 16,
+                  ),
+                  child: Text(
+                    'Sleepytime',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    start: 8.0,
+                  ),
+                  child: Text(
+                    'I have to wake up at:',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 4.0),
+                  child: Button(onTap: onSleepLater, lable: 'Go'),
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    start: 8.0,
+                    top: 8.0,
+                  ),
+                  child: Text(
+                    'or, find out when to wake up:',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 4.0),
+                  child: Button(onTap: onSleepNow, lable: 'Sleep now'),
+                ),
                 if (value.isNotEmpty)
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Padding(
-                        padding: EdgeInsetsDirectional.only(
-                          top: 16.0,
-                          start: 8.0,
-                        ),
-                        child: Text('Sleep now, wake up at...'),
+                      ValueListenableBuilder(
+                        valueListenable: sleepNowNotifier,
+                        builder: (BuildContext context, value, _) {
+                          return Padding(
+                            padding: const EdgeInsetsDirectional.only(
+                              top: 16.0,
+                              start: 8.0,
+                            ),
+                            child: Text(value
+                                ? 'Sleep now, wake up at...'
+                                : 'Go to bed at one of the following times:'),
+                          );
+                        },
                       ),
                       Wrap(
                         children: value
@@ -82,20 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       );
 
-  Widget buildSleepNowButton(BuildContext context) => InkWell(
-        onTap: onSleepNow,
-        child: Card(
-          color: Theme.of(context).colorScheme.inversePrimary,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Sleep now',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-        ),
-      );
-
   void onSleepNow() {
     final now = DateTime.now();
     final wakeupTimes = [];
@@ -114,6 +144,40 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
+    sleepNowNotifier.value = true;
     wakeupTimesNotifier.value = wakeupTimes;
   }
+
+  void onSleepLater() {
+    final wakeupTimes = [];
+
+    sleepNowNotifier.value = false;
+    wakeupTimesNotifier.value = wakeupTimes;
+  }
+}
+
+class Button extends StatelessWidget {
+  const Button({
+    required this.lable,
+    required this.onTap,
+    super.key,
+  });
+
+  final String lable;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: onTap,
+        child: Card(
+          color: Theme.of(context).colorScheme.inversePrimary,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              lable,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
+        ),
+      );
 }
