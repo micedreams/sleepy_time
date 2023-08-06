@@ -52,13 +52,15 @@ class _SleepyTimeState extends State<SleepyTime> {
               'Sleepytime',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
-            Padding(
+            Container(
+              width: 320,
               padding: const EdgeInsets.only(
                 top: 12,
               ),
               child: Text(
                 words,
                 style: Theme.of(context).textTheme.bodyLarge,
+                textAlign: TextAlign.justify,
               ),
             ),
           ],
