@@ -78,9 +78,12 @@ class _SleepyTimeState extends State<SleepyTime> {
                               top: 16.0,
                               start: 8.0,
                             ),
-                            child: Text(value
-                                ? 'Sleep now, wake up at...'
-                                : 'Go to bed at one of the following times:'),
+                            child: Text(
+                              value
+                                  ? 'Sleep now, wake up at...'
+                                  : 'Go to bed at one of the following times:',
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
                           );
                         },
                       ),
@@ -136,4 +139,3 @@ class _SleepyTimeState extends State<SleepyTime> {
     wakeupTimesNotifier.value = wakeupTimes;
   }
 }
-
