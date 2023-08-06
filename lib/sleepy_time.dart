@@ -19,18 +19,18 @@ class _SleepyTimeState extends State<SleepyTime> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: SingleChildScrollView(
-          child: ValueListenableBuilder(
-            valueListenable: wakeupTimesNotifier,
-            builder: (context, value, _) => Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/night.jpeg"),
-                  fit: BoxFit.cover,
-                ),
+        body: ValueListenableBuilder(
+          valueListenable: wakeupTimesNotifier,
+          builder: (context, value, _) => Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/night.jpeg"),
+                fit: BoxFit.cover,
               ),
-              alignment: AlignmentDirectional.center,
-              padding: const EdgeInsets.all(8.0),
+            ),
+            alignment: AlignmentDirectional.center,
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
                   buildTitleNContent(context),
