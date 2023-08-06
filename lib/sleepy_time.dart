@@ -3,6 +3,9 @@ import 'package:intl/intl.dart';
 
 import 'button.dart';
 
+const words =
+    "A good night's sleep consists of 5 to 6 complete sleep cycles. It takes the average human fifteen minutes to fall asleep. Sleepytime works by counting backwards in sleep cycles. Sleep cycles typically last 90 minutes. Waking up in the middle of a sleep cycle leaves you feeling tired and groggy, but waking up in between cycles lets you wake up feeling refreshed and alert!";
+
 class SleepyTime extends StatefulWidget {
   const SleepyTime({super.key});
 
@@ -29,7 +32,7 @@ class _SleepyTimeState extends State<SleepyTime> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
-                buildTitle(context),
+                buildTitleNContent(context),
                 buildSleepLater(context),
                 buildSleepNow(context),
                 if (value.isNotEmpty) buildViewTime(value, context),
@@ -39,11 +42,24 @@ class _SleepyTimeState extends State<SleepyTime> {
         ),
       );
 
-  Padding buildTitle(BuildContext context) => Padding(
+  Padding buildTitleNContent(BuildContext context) => Padding(
         padding: const EdgeInsetsDirectional.all(16),
-        child: Text(
-          'Sleepytime',
-          style: Theme.of(context).textTheme.headlineLarge,
+        child: Column(
+          children: [
+            Text(
+              'Sleepytime',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 12,
+              ),
+              child: Text(
+                words,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+          ],
         ),
       );
 
