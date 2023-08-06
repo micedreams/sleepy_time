@@ -33,19 +33,19 @@ class _MyHomePageState extends State<MyHomePage> {
   final wakeupTimesNotifier = ValueNotifier([]);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Sleey time'),
-      ),
-      body: ValueListenableBuilder(
-        valueListenable: wakeupTimesNotifier,
-        builder: (context, value, _) => Center(
-          child: Padding(
+  Widget build(BuildContext context) => Scaffold(
+        body: ValueListenableBuilder(
+          valueListenable: wakeupTimesNotifier,
+          builder: (context, value, _) => Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/night.jpeg"),
+                fit: BoxFit.cover,
+              ),
+            ),
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 buildSleepNowButton(context),
                 if (value.isNotEmpty)
@@ -53,7 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(top: 16.0),
+                        padding: EdgeInsetsDirectional.only(
+                          top: 16.0,
+                          start: 8.0,
+                        ),
                         child: Text('Sleep now, wake up at...'),
                       ),
                       Wrap(
@@ -77,9 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
 
   Widget buildSleepNowButton(BuildContext context) => InkWell(
         onTap: onSleepNow,
