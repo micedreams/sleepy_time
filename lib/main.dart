@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,13 +30,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final wakeupTimesNotifier = ValueNotifier([]);
 
   @override
   Widget build(BuildContext context) {
@@ -44,25 +39,80 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Sleey time'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: ValueListenableBuilder(
+        valueListenable: wakeupTimesNotifier,
+        builder: (context, value, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                buildSleepNowButton(context),
+                if (value.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(top: 16.0),
+                        child: Text('Sleep now, wake up at...'),
+                      ),
+                      Wrap(
+                        children: value
+                            .map((i) => Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      DateFormat('kk:mm').format(i),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  ),
+              ],
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
+  }
+
+  Widget buildSleepNowButton(BuildContext context) => InkWell(
+        onTap: onSleepNow,
+        child: Card(
+          color: Theme.of(context).colorScheme.inversePrimary,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Sleep now',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
+        ),
+      );
+
+  void onSleepNow() {
+    final now = DateTime.now();
+    final wakeupTimes = [];
+
+    for (int i = 0; i < 6; i++) {
+      if (wakeupTimes.isEmpty) {
+        wakeupTimes.add(now.add(const Duration(
+          hours: 1,
+          minutes: 45,
+        )));
+      } else {
+        wakeupTimes.add(wakeupTimes.last.add(const Duration(
+          hours: 1,
+          minutes: 30,
+        )));
+      }
+    }
+
+    wakeupTimesNotifier.value = wakeupTimes;
   }
 }
