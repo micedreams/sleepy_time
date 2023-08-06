@@ -15,7 +15,7 @@ class SleepyTime extends StatefulWidget {
 
 class _SleepyTimeState extends State<SleepyTime> {
   final wakeupTimesNotifier = ValueNotifier([]);
-  final sleepNowNotifier = ValueNotifier(false);
+  final sleepTimeNotifier = ValueNotifier<String?>(null);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -71,9 +71,14 @@ class _SleepyTimeState extends State<SleepyTime> {
               'I have to wake up at:',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            Padding(
-              padding: const EdgeInsetsDirectional.only(top: 8.0),
-              child: Button(onTap: onSleepLater, lable: 'Go'),
+            ValueListenableBuilder(
+              builder: (context, value, _) {
+                return Padding(
+                  padding: const EdgeInsetsDirectional.only(top: 8.0),
+                  child: Button(onTap: onSleepLater, lable: value ?? 'Go'),
+                );
+              },
+              valueListenable: sleepTimeNotifier,
             ),
           ],
         ),
@@ -100,9 +105,9 @@ class _SleepyTimeState extends State<SleepyTime> {
         child: Column(
           children: [
             ValueListenableBuilder(
-              valueListenable: sleepNowNotifier,
+              valueListenable: sleepTimeNotifier,
               builder: (BuildContext context, value, _) => Text(
-                value
+                value == null
                     ? 'Sleep now, wake up at...'
                     : 'Go to bed at one of the following times:',
                 style: Theme.of(context).textTheme.headlineLarge,
@@ -143,14 +148,82 @@ class _SleepyTimeState extends State<SleepyTime> {
       }
     }
 
-    sleepNowNotifier.value = true;
+    sleepTimeNotifier.value = null;
     wakeupTimesNotifier.value = wakeupTimes;
   }
 
-  void onSleepLater() {
+  Future<void> onSleepLater() async {
     final wakeupTimes = [];
+    final now = DateTime.now();
 
-    sleepNowNotifier.value = false;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (null == time) {
+      return;
+    }
+
+    late final DateTime later;
+
+    if ((time.hour - now.hour) < 0) {
+      final nextDay = DateTime.now().add(const Duration(days: 1));
+      later = DateTime(
+          nextDay.year, nextDay.month, nextDay.day, time.hour, time.minute);
+    } else {
+      later = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    }
+
+    final diffrence = later.difference(now).inMinutes.abs();
+
+    if (585 <= diffrence) {
+      wakeupTimes.add(later.subtract(const Duration(
+        hours: 9,
+        minutes: 15,
+      )));
+    }
+
+    if (465 <= diffrence) {
+      wakeupTimes.add(later.subtract(const Duration(
+        hours: 7,
+        minutes: 45,
+      )));
+    }
+
+    if (375 <= diffrence) {
+      wakeupTimes.add(later.subtract(const Duration(
+        hours: 6,
+        minutes: 15,
+      )));
+    }
+
+    if (285 <= diffrence) {
+      wakeupTimes.add(later.subtract(const Duration(
+        hours: 4,
+        minutes: 45,
+      )));
+    }
+
+    if (195 <= diffrence) {
+      wakeupTimes.add(later.subtract(const Duration(
+        hours: 3,
+        minutes: 15,
+      )));
+    }
+
+    if (105 <= diffrence) {
+      wakeupTimes.add(later.subtract(const Duration(
+        hours: 1,
+        minutes: 45,
+      )));
+    }
+
+    sleepTimeNotifier.value = DateFormat('kk:mm').format(later);
     wakeupTimesNotifier.value = wakeupTimes;
   }
 }
