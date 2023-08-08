@@ -14,12 +14,12 @@ class SleepyTime extends StatefulWidget {
 }
 
 class _SleepyTimeState extends State<SleepyTime> {
-  final wakeupTimesNotifier = ValueNotifier([]);
+  final wakeupTimesNotifier = ValueNotifier(<DateTime>[]);
   final sleepTimeNotifier = ValueNotifier<String?>(null);
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: ValueListenableBuilder(
+        body: ValueListenableBuilder<List<DateTime>>(
           valueListenable: wakeupTimesNotifier,
           builder: (context, value, _) => Container(
             decoration: const BoxDecoration(
@@ -44,7 +44,7 @@ class _SleepyTimeState extends State<SleepyTime> {
         ),
       );
 
-  Padding buildTitleNContent(BuildContext context) => Padding(
+  Widget buildTitleNContent(BuildContext context) => Padding(
         padding: const EdgeInsetsDirectional.all(16),
         child: Column(
           children: [
@@ -75,14 +75,14 @@ class _SleepyTimeState extends State<SleepyTime> {
               'I have to wake up at:',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            ValueListenableBuilder(
+            ValueListenableBuilder<String?>(
+              valueListenable: sleepTimeNotifier,
               builder: (context, value, _) {
                 return Padding(
                   padding: const EdgeInsetsDirectional.only(top: 8.0),
                   child: Button(onTap: onSleepLater, lable: value ?? 'Go'),
                 );
               },
-              valueListenable: sleepTimeNotifier,
             ),
           ],
         ),
@@ -136,7 +136,7 @@ class _SleepyTimeState extends State<SleepyTime> {
 
   void onSleepNow() {
     final now = DateTime.now();
-    final wakeupTimes = [];
+    final wakeupTimes = <DateTime>[];
 
     for (int i = 0; i < 6; i++) {
       if (wakeupTimes.isEmpty) {
@@ -157,7 +157,7 @@ class _SleepyTimeState extends State<SleepyTime> {
   }
 
   Future<void> onSleepLater() async {
-    final wakeupTimes = [];
+    final wakeupTimes = <DateTime>[];
     final now = DateTime.now();
 
     final time = await showTimePicker(
@@ -177,8 +177,7 @@ class _SleepyTimeState extends State<SleepyTime> {
 
     if ((time.hour - now.hour) < 0) {
       final nextDay = DateTime.now().add(const Duration(days: 1));
-      later = DateTime(
-          nextDay.year, nextDay.month, nextDay.day, time.hour, time.minute);
+      later = DateTime(nextDay.year, nextDay.month, nextDay.day, time.hour, time.minute);
     } else {
       later = DateTime(now.year, now.month, now.day, time.hour, time.minute);
     }
