@@ -33,6 +33,8 @@ jobs:
         run: rm .gitignore .metadata analysis_options.yaml pre-commit pubspec.lock pubspec.yaml README.md
       - name: move build files into root folder
         run: mv -n ./web2/* ./ && rm -r web2
+      - name: ls
+        run: ls
       - name: Commit files
         run: |
           git config --local core.autocrlf false
