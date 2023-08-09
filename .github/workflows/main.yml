@@ -47,7 +47,8 @@ jobs:
       - name: Push changes
         uses: ad-m/push-to-branch@v2
         with:
-          destination_branch: web
-          force: true
-          atomic: true
-          github_token: ${{ secrets.TOKEN }}
+        github_token: ${{ secrets.TOKEN }}
+        repository: micedreams/sleepy_time
+        destination_branch: web
+        force: true
+        atomic: true
