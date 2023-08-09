@@ -25,30 +25,7 @@ jobs:
         run: flutter analyze --no-pub .
       - name: Build app
         run: flutter build web
-      - name: move build directory into root folder
-        run: mv -n ./build/web ./build/web2 && mv -n ./build/web2 ./
-      - name: Remove folders
-        run: rm -r .github assets lib web build
-      - name: remove files 
-        run: rm .gitignore .metadata analysis_options.yaml pre-commit pubspec.lock pubspec.yaml README.md
-      - name: move build files into root folder
-        run: mv -n ./web2/* ./ && rm -r web2
-      - name: ls
-        run: ls
-      - name: Commit files
-        run: |
-          git config --local core.autocrlf false
-          git config --local user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --local user.name "${{ github.actor }}"
-          git add . && git add --renormalize .
-          git pull origin ${{ github.head_ref }} --autostash --rebase -X ours
-          git commit --allow-empty -am "AUTO-GH ACTION: ${{ github.workflow }}"
-          NO_PAGER=1 git --no-pager diff HEAD^
-      - name: Push changes
-        uses: ad-m/push-to-branch@v2
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.TOKEN }}
-          repository: micedreams/sleepy_time
-          destination_branch: web
-          force: true
-          atomic: true
