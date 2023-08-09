@@ -23,10 +23,25 @@ jobs:
         run: dart format --line-length 100 --set-exit-if-changed --output none .
       - name: Detect syntax errors
         run: flutter analyze --no-pub .
+      - name: remove docs folder.
+        run: rm -r docs
       - name: Build app
         run: flutter build web
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: move build directory into root folder
+        run: mv -n ./build/web ./build/docs && mv -n ./build/docs ./
+      - name: ls
+        run: ls
+      - name: Commit files
+        run: |
+          git config --local core.autocrlf false
+          git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --local user.name "${{ github.actor }}"
+          git add . && git add --renormalize .
+          git pull origin ${{ github.head_ref }} --autostash --rebase -X ours
+          git commit --allow-empty -am "AUTO-GH ACTION: ${{ github.workflow }}"
+          NO_PAGER=1 git --no-pager diff HEAD^
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
         with:
+          branch: ${{ github.head_ref }}
           github_token: ${{ secrets.TOKEN }}
-          publish_dir: ./public
